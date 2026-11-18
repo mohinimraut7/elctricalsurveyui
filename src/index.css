@@ -1,0 +1,148 @@
+@import "leaflet/dist/leaflet.css";
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   Layout tokens (brand / cream / ink) MIDC portal प्रमाणे,
+   पण रंग Vasai-Virar website चे (municipal green + soft gold + warm white)
+   ══════════════════════════════════════════════════════════ */
+@theme {
+  /* Fonts — VVMC website */
+  --font-display: "Poppins", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  /* Brand — natural municipal green (VVMC seal #00843C) */
+  --color-brand-50: #f2f8f4;
+  --color-brand-100: #e8f3ec;
+  --color-brand-200: #c9e4d3;
+  --color-brand-300: #98cbac;
+  --color-brand-400: #4fa673;
+  --color-brand-500: #00843c;
+  --color-brand-600: #007536;
+  --color-brand-700: #00632d;
+  --color-brand-800: #0d4d29;
+  --color-brand-900: #193528;
+
+  /* Backgrounds — warm white / cream */
+  --color-cream-50: #fdfdfb;
+  --color-cream-100: #fafcfa;
+  --color-cream-150: #f9f7f0;
+  --color-cream-200: #eef1ec;
+  --color-cream-300: #e2e7e0;
+
+  /* Text — dark forest green */
+  --color-ink-900: #193528;
+  --color-ink-800: #22402f;
+  --color-ink-700: #2c4736;
+  --color-ink-500: #5b6f62;
+  --color-ink-400: #85958a;
+  --color-ink-300: #b5c1b9;
+
+  /* Accent — soft golden yellow */
+  --color-gold-50: #fbf8ec;
+  --color-gold-100: #f5f0de;
+  --color-gold-300: #e3cc7a;
+  --color-gold-400: #d3b347;
+  --color-gold-500: #c09c24;
+  --color-gold-600: #997c1c;
+
+  /* Status (muted, professional) */
+  --color-status-ok: #2e9e5b;
+  --color-status-warn: #c58a1a;
+  --color-status-bad: #c2493f;
+  --color-status-info: #3d7a8c;
+
+  /* Radius & soft shadows (green-tinted, never heavy) */
+  --radius-card: 1.25rem;
+  --shadow-card: 0 1px 2px rgb(25 53 40 / 0.04), 0 8px 24px -14px rgb(25 53 40 / 0.14);
+  --shadow-raised: 0 2px 6px rgb(25 53 40 / 0.05), 0 18px 40px -18px rgb(25 53 40 / 0.22);
+  --shadow-brand: 0 8px 20px -8px rgb(0 132 60 / 0.45);
+
+  /* Animations */
+  --animate-fade-in: fade-in 0.5s ease-out both;
+  --animate-slide-up: slide-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-progress: progress 1.1s ease-in-out infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes progress {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(300%); }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* ══════════ BASE ══════════ */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth; /* Smooth Scroll */
+  }
+  body {
+    @apply bg-cream-100 text-ink-900 font-sans text-[14.5px] leading-relaxed;
+    background-image:
+      radial-gradient(ellipse at 0% 0%, rgb(232 243 236 / 0.8), transparent 45%),
+      radial-gradient(ellipse at 100% 100%, rgb(249 247 240 / 0.95), transparent 50%);
+    background-attachment: fixed;
+  }
+  h1, h2, h3, h4, h5 {
+    @apply font-display text-ink-900 tracking-tight;
+  }
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { @apply bg-cream-300 rounded-full; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  button { cursor: pointer; }
+}
+
+/* ══════════ COMPONENT HELPERS (shared animation standard) ══════════ */
+@layer components {
+  /* Hover Lift + Shadow Transition */
+  .card {
+    @apply rounded-2xl border border-cream-200 bg-white shadow-card;
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-raised;
+  }
+  /* Inputs */
+  .input {
+    @apply h-10 w-full rounded-xl border border-cream-300 bg-cream-50 px-3 text-sm text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-brand-400 focus:bg-white focus:ring-4 focus:ring-brand-100;
+  }
+  .select {
+    @apply h-10 rounded-xl border border-cream-300 bg-white px-3 text-xs font-medium text-ink-700 outline-none transition focus:border-brand-400 focus:ring-4 focus:ring-brand-100;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-brand-500 to-brand-700 px-4 py-2 text-sm font-semibold text-white shadow-brand transition-all duration-200 hover:brightness-105 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-cream-300 bg-white px-3 py-2 text-xs font-semibold text-ink-700 transition-colors duration-200 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 disabled:opacity-50;
+  }
+  /* Smooth Accordion — grid-rows trick (height auto animate) */
+  .accordion-body {
+    @apply grid transition-[grid-template-rows] duration-300 ease-out;
+  }
+}
+
+/* Leaflet popups — soft card look */
+.leaflet-popup-content-wrapper {
+  border-radius: 14px !important;
+  box-shadow: var(--shadow-raised) !important;
+}
+.leaflet-container {
+  font-family: var(--font-sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
